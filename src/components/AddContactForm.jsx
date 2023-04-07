@@ -1,13 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 
 const AddContactForm = () => {
+  const imgApi = import.meta.env.Image_Bb_Api;
+  const [error, setError] = useState("");
+
   const handleNewContact = (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.name.value;
     const phone = form.number.value;
     const email = form.email.value;
-    console.log(name, phone, email);
+    const profile = form.profile.files[0];
+    console.log(name, phone, email, profile);
+
+    const formData = new FormData();
+    formData.append("image", profile);
+    const url = `https://api.imgbb.com/1/upload?key=7e74aeef43f1128d0f03678519a7718e`;
+    fetch(url, {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((imageData) => {
+        console.log(imageData);
+        const image = imageData.data.url;
+
+        const contact = {
+          name,
+          phone,
+          email,
+          image,
+        };
+
+        // store address data
+        fetch("http://localhost:5000/contacts", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(contact),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            if (data.message) {
+              setError(data.message);
+            }
+            if (data.acknowledged) {
+              setError("");
+              form.reset();
+              toast("New contact create!");
+            }
+          })
+          .catch((err) => console.error(err));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
@@ -30,7 +80,7 @@ const AddContactForm = () => {
               <input
                 type="text"
                 name="name"
-                placeholder="Sam Barman"
+                placeholder="Sam Roy"
                 className="input input-bordered"
                 required
               />
@@ -49,7 +99,7 @@ const AddContactForm = () => {
             </div>
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Email address</span>
+                <span className="label-text">Email address *</span>
               </label>
               <input
                 type="email"
@@ -60,11 +110,11 @@ const AddContactForm = () => {
             </div>
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Profile</span>
+                <span className="label-text">Profile </span>
               </label>
-              <input type="text" className="input input-bordered" />
+              <input type="file" name="profile" accept="image/*" />
               <label className="label">
-                <p className="text-error">error</p>
+                <p className="text-error">{error}</p>
               </label>
             </div>
             <div className="form-control mt-6">
