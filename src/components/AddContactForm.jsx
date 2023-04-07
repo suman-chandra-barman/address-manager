@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 
-const AddContactForm = () => {
+const AddContactForm = ({ setLoading }) => {
   const imgApi = import.meta.env.Image_Bb_Api;
   const [error, setError] = useState("");
 
@@ -44,6 +44,7 @@ const AddContactForm = () => {
           .then((res) => res.json())
           .then((data) => {
             console.log(data);
+            setLoading(true);
             if (data.message) {
               setError(data.message);
             }

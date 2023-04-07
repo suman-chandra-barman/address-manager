@@ -1,7 +1,7 @@
 import React from "react";
 import AddContactForm from "./AddContactForm";
 
-const Header = () => {
+const Header = ({ setLoading }) => {
   return (
     <>
       <div className="flex justify-between items-center py-4">
@@ -15,7 +15,7 @@ const Header = () => {
           Add Contact
         </label>
       </div>
-      <AddContactForm />
+      <AddContactForm setLoading={setLoading} />
     </>
   );
 };

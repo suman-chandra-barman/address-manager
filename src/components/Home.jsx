@@ -3,6 +3,7 @@ import Header from "./Header";
 import ContactCard from "./ContactCard";
 
 const Home = () => {
+  const [loading, setLoading] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -16,7 +17,7 @@ const Home = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [loading]);
 
   const filteredContacts = contacts.filter(
     (contact) =>
@@ -24,11 +25,27 @@ const Home = () => {
       contact.phone.includes(searchQuery)
   );
 
+  const handleDelate = (id) => {
+    fetch(`http://localhost:5000/contacts/${id}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.deletedCount > 0) {
+          setLoading(true);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <main className="container mx-auto">
-      <Header />
-      <section className="flex">
-        <div className="w-1/2">
+      <Header setLoading={setLoading} />
+      <section>
+        <div className="md:w-1/2 mx-auto">
           {/* Search Section */}
           <div className="form-control">
             <div className="input-group">
@@ -61,11 +78,14 @@ const Home = () => {
           {/*All contacts  */}
           <div>
             {filteredContacts.map((contact) => (
-              <ContactCard key={contact._id} contact={contact} />
+              <ContactCard
+                key={contact._id}
+                contact={contact}
+                handleDelate={handleDelate}
+              />
             ))}
           </div>
         </div>
-        <div className="w-1/2">2</div>
       </section>
     </main>
   );
