@@ -2,9 +2,30 @@ import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 
 const AddContactForm = ({ setLoading }) => {
-  const imgApi = import.meta.env.Image_Bb_Api;
   const [error, setError] = useState("");
+  const [updateData, setUpdateData] = useState({});
 
+  const handleUpdate = () => {
+    fetch(
+      `https://address-manager-server-suman-chandra-barman.vercel.app/contacts/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const imgApi = import.meta.env.Image_Bb_Api;
   const handleNewContact = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -32,15 +53,19 @@ const AddContactForm = ({ setLoading }) => {
           email,
           image,
         };
+        setUpdateData(contact);
 
         // store address data
-        fetch("http://localhost:5000/contacts", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(contact),
-        })
+        fetch(
+          "https://address-manager-server-suman-chandra-barman.vercel.app/contacts",
+          {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(contact),
+          }
+        )
           .then((res) => res.json())
           .then((data) => {
             console.log(data);
@@ -121,6 +146,7 @@ const AddContactForm = ({ setLoading }) => {
             <div className="form-control mt-6">
               <button
                 type="submit"
+                onClick={() => handleUpdate()}
                 className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold px-5 rounded-full border-none"
               >
                 New Contact

@@ -8,7 +8,9 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/contacts")
+    fetch(
+      "https://address-manager-server-suman-chandra-barman.vercel.app/contacts"
+    )
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -26,9 +28,12 @@ const Home = () => {
   );
 
   const handleDelate = (id) => {
-    fetch(`http://localhost:5000/contacts/${id}`, {
-      method: "DELETE",
-    })
+    fetch(
+      `https://address-manager-server-suman-chandra-barman.vercel.app/contacts/${id}`,
+      {
+        method: "DELETE",
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -42,7 +47,7 @@ const Home = () => {
   };
 
   return (
-    <main className="container mx-auto">
+    <main className="container mx-auto px-2">
       <Header setLoading={setLoading} />
       <section>
         <div className="md:w-1/2 mx-auto">
