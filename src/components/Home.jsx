@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Header from "./Header";
+import ContactCard from "./ContactCard";
 
 const Home = () => {
   const [contacts, setContacts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5000/contacts")
@@ -16,20 +18,28 @@ const Home = () => {
       });
   }, []);
 
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contact.phone.includes(searchQuery)
+  );
+
   return (
     <main className="container mx-auto">
       <Header />
       <section className="flex">
-        // Search Section
         <div className="w-1/2">
+          {/* Search Section */}
           <div className="form-control">
             <div className="input-group">
               <input
                 type="text"
                 placeholder="Search by name or phone"
                 className="input input-bordered w-full"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button className="btn btn-square">
+              <button className="btn btn-square bg-blue-500 border-blue-500 hover:bg-blue-700 hover:border-blue-700">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -46,6 +56,13 @@ const Home = () => {
                 </svg>
               </button>
             </div>
+          </div>
+
+          {/*All contacts  */}
+          <div>
+            {filteredContacts.map((contact) => (
+              <ContactCard key={contact._id} contact={contact} />
+            ))}
           </div>
         </div>
         <div className="w-1/2">2</div>
